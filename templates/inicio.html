@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Pastelería artesanal: tortas, pasteles y dulces preparados con cariño.">
+    <title>Pastelería Dulce Hogar | Hecho con cariño</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --cream: #fffaf3;
+            --pink: #c65e68;
+            --ink: #392b2c;
+            --muted: #715e5c;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: var(--cream);
+            color: var(--ink);
+            font-family: Georgia, "Times New Roman", serif;
+        }
+        header, main, footer { padding: 1.25rem max(1.5rem, calc((100% - 1080px) / 2)); }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border-bottom: 1px solid #f0dfd4;
+        }
+        .brand { color: var(--pink); font-size: 1.3rem; font-weight: bold; text-decoration: none; }
+        nav a { margin-left: 1.25rem; color: var(--ink); text-decoration: none; }
+        .hero {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            align-items: center;
+            gap: 3rem;
+            min-height: 470px;
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
+        .eyebrow { color: var(--pink); font-size: 0.9rem; letter-spacing: 0.12em; text-transform: uppercase; }
+        h1 { max-width: 640px; margin: 0.5rem 0 1rem; font-size: clamp(2.6rem, 6vw, 4.7rem); line-height: 1.05; }
+        .hero p, .intro { max-width: 570px; color: var(--muted); font: 1.1rem/1.7 Arial, sans-serif; }
+        .button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.9rem 1.35rem;
+            border-radius: 999px;
+            background: var(--pink);
+            color: white;
+            font: bold 1rem Arial, sans-serif;
+            text-decoration: none;
+        }
+        .cake {
+            display: grid;
+            min-height: 300px;
+            place-items: center;
+            border-radius: 48% 48% 44% 44%;
+            background: radial-gradient(circle at 50% 43%, #fff8f1 0 24%, #efc5b6 25% 35%, #fff8f1 36% 45%, #e8ad9d 46% 55%, #f6dfd1 56%);
+            color: #88534c;
+            font-size: 5rem;
+        }
+        .specialties { padding-top: 1rem; padding-bottom: 3.5rem; text-align: center; }
+        .specialties h2 { font-size: 2rem; }
+        .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+        .card { padding: 1.5rem; border: 1px solid #f0dfd4; border-radius: 1rem; background: white; }
+        .card span { font-size: 2rem; }
+        .card h3 { margin-bottom: 0.5rem; }
+        .card p { color: var(--muted); font: 0.95rem/1.5 Arial, sans-serif; }
+        .products { padding-top: 1rem; padding-bottom: 3.5rem; text-align: center; }
+        .products h2 { font-size: 2rem; }
+        .product-image { width: 100%; height: 180px; border-radius: 0.6rem; object-fit: cover; }
+        .product-price { color: var(--pink); font: bold 1.1rem Arial, sans-serif; }
+        footer { border-top: 1px solid #f0dfd4; color: var(--muted); font: 0.9rem Arial, sans-serif; text-align: center; }
+        @media (max-width: 700px) {
+            header { flex-wrap: wrap; }
+            nav a { margin: 0 0 0 0.8rem; }
+            .hero { grid-template-columns: 1fr; gap: 1.5rem; min-height: 0; }
+            .cake { min-height: 230px; }
+            .cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="brand" href="/">Pastelería Dulce Hogar</a>
+        <nav aria-label="Navegación principal">
+            <a href="#productos">Productos</a>
+            <a href="#especialidades">Especialidades</a>
+            <a href="#contacto">Contacto</a>
+        </nav>
+    </header>
+    <main>
+        <section class="hero">
+            <div>
+                <p class="eyebrow">Un momento dulce, todos los días</p>
+                <h1>Hecho con cariño, compartido con alegría.</h1>
+                <p>En nuestra pastelería cada torta y cada pastel se prepara artesanalmente, con ingredientes frescos y ese sabor que convierte cualquier día en una celebración.</p>
+                <a class="button" href="#especialidades">Conoce nuestras delicias</a>
+            </div>
+            <div class="cake" role="img" aria-label="Torta de crema y frutillas">🍰</div>
+        </section>
+        <section class="specialties" id="especialidades">
+            <p class="eyebrow">Preparado para ti</p>
+            <h2>Nuestras especialidades</h2>
+            <p class="intro">Un pequeño gusto puede hacer especial cualquier ocasión.</p>
+            <div class="cards">
+                <article class="card">
+                    <span aria-hidden="true">🎂</span>
+                    <h3>Tortas artesanales</h3>
+                    <p>Recetas caseras para cumpleaños, celebraciones y momentos inolvidables.</p>
+                </article>
+                <article class="card">
+                    <span aria-hidden="true">🥐</span>
+                    <h3>Pasteles frescos</h3>
+                    <p>Horneados cada día, con rellenos suaves y sabores de temporada.</p>
+                </article>
+                <article class="card">
+                    <span aria-hidden="true">🍪</span>
+                    <h3>Dulces para compartir</h3>
+                    <p>Galletas y bocaditos preparados con dedicación para disfrutar en compañía.</p>
+                </article>
+            </div>
+        </section>
+        <section class="products" id="productos">
+            <p class="eyebrow">Recién preparados</p>
+            <h2>Productos disponibles</h2>
+            {% if productos %}
+                <div class="cards">
+                    {% for producto in productos %}
+                        <article class="card">
+                            {% if producto.imagen_url %}
+                                <img class="product-image" src="{{ producto.imagen_url }}" alt="{{ producto.nombre }}">
+                            {% else %}
+                                <span aria-hidden="true">🍰</span>
+                            {% endif %}
+                            <h3>{{ producto.nombre }}</h3>
+                            <p>{{ producto.descripcion }}</p>
+                            <p class="product-price">$ {{ producto.precio }}</p>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="intro">Pronto tendremos nuevas delicias. Vuelve a visitarnos.</p>
+            {% endif %}
+        </section>
+    </main>
+    <footer id="contacto">Pastelería Dulce Hogar · Un toque de dulzura en tu día</footer>
+</body>
+</html>
