@@ -31,6 +31,35 @@ class PaginasTest(TestCase):
         self.assertContains(response, 'Torta de chocolate')
         self.assertNotContains(response, 'Galletas agotadas')
 
+    def test_precio_se_muestra_formateado_a_pesos_chilenos(self):
+        Producto.objects.create(
+            nombre='Torta de chocolate',
+            descripcion='Torta artesanal',
+            precio='15990.00',
+        )
+
+        response = self.client.get('/')
+
+        self.assertContains(response, '$ 15.990')
+
+    def test_admin_muestra_precio_formateado_a_pesos_chilenos(self):
+        Producto.objects.create(
+            nombre='Torta de chocolate',
+            descripcion='Torta artesanal',
+            precio='15990.00',
+        )
+
+        usuario = get_user_model().objects.create_superuser(
+            username='administrador',
+            email='admin@example.com',
+            password='clave-de-prueba',
+        )
+        self.client.force_login(usuario)
+
+        response = self.client.get('/admin/pasteleria/producto/')
+
+        self.assertContains(response, '$ 15.990')
+
     def test_admin_puede_agregar_producto(self):
         usuario = get_user_model().objects.create_superuser(
             username='administrador',

@@ -1,3 +1,4 @@
+{% load moneda_chilena %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -137,7 +138,7 @@
                             {% endif %}
                             <h3>{{ producto.nombre }}</h3>
                             <p>{{ producto.descripcion }}</p>
-                            <p class="product-price">$ {{ producto.precio }}</p>
+                            <p class="product-price">{{ producto.precio|clp }}</p>
                         </article>
                     {% endfor %}
                 </div>
