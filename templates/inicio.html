@@ -1,4 +1,3 @@
-{% load moneda_chilena %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -131,14 +130,16 @@
                 <div class="cards">
                     {% for producto in productos %}
                         <article class="card">
-                            {% if producto.imagen_url %}
+                            {% if producto.imagen %}
+                                <img class="product-image" src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                            {% elif producto.imagen_url %}
                                 <img class="product-image" src="{{ producto.imagen_url }}" alt="{{ producto.nombre }}">
                             {% else %}
                                 <span aria-hidden="true">🍰</span>
                             {% endif %}
                             <h3>{{ producto.nombre }}</h3>
                             <p>{{ producto.descripcion }}</p>
-                            <p class="product-price">{{ producto.precio|clp }}</p>
+                            <p class="product-price">{{ producto.precio_formateado }}</p>
                         </article>
                     {% endfor %}
                 </div>
