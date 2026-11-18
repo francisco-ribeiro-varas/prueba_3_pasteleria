@@ -116,11 +116,6 @@
                     <h3>Pasteles frescos</h3>
                     <p>Horneados cada día, con rellenos suaves y sabores de temporada.</p>
                 </article>
-                <article class="card">
-                    <span aria-hidden="true">🍪</span>
-                    <h3>Dulces para compartir</h3>
-                    <p>Galletas y bocaditos preparados con dedicación para disfrutar en compañía.</p>
-                </article>
             </div>
         </section>
         <section class="products" id="productos">
@@ -140,10 +135,13 @@
                             <h3>{{ producto.nombre }}</h3>
                             <p>{{ producto.descripcion }}</p>
                             <p class="product-price">{{ producto.precio_formateado }}</p>
-                            {% if producto.disponible %}
+                            {% if producto.disponible and producto.stock > 0 %}
+                                <p>Disponibles: {{ producto.stock }}</p>
                                 <a class="button" href="{% url 'detalle_producto' producto.pk %}">Ver y comprar</a>
                             {% else %}
-                                <p class="product-price">No disponible</p>
+                                <p class="product-price">
+                                    {% if producto.stock == 0 %}Sin stock{% else %}No disponible{% endif %}
+                                </p>
                                 <a class="button" href="{% url 'detalle_producto' producto.pk %}">Ver producto</a>
                             {% endif %}
                         </article>

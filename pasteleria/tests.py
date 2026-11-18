@@ -23,12 +23,14 @@ class PaginasTest(TestCase):
             nombre='Torta de chocolate',
             descripcion='Torta artesanal',
             precio='15990.00',
+            stock=5,
         )
         Producto.objects.create(
             nombre='Galletas agotadas',
             descripcion='Galletas de temporada',
             precio='2500.00',
             disponible=False,
+            stock=5,
         )
 
         response = self.client.get('/')
@@ -54,6 +56,7 @@ class PaginasTest(TestCase):
             nombre='Torta de chocolate',
             descripcion='Torta artesanal',
             precio='15990.00',
+            stock=3,
         )
 
         response = self.client.get(reverse('detalle_producto', args=[producto.pk]))
@@ -70,6 +73,7 @@ class PaginasTest(TestCase):
             nombre='Torta de chocolate',
             descripcion='Torta artesanal',
             precio='15990.00',
+            stock=3,
         )
 
         response = self.client.get('/')
@@ -81,6 +85,7 @@ class PaginasTest(TestCase):
             nombre='Torta de chocolate',
             descripcion='Torta artesanal',
             precio='15990.00',
+            stock=3,
         )
 
         usuario = get_user_model().objects.create_superuser(
@@ -109,6 +114,7 @@ class PaginasTest(TestCase):
                 'descripcion': 'Cheesecake de frutilla',
                 'precio': '8500.00',
                 'imagen_url': '',
+                'stock': '5',
                 'disponible': 'on',
             },
         )
@@ -136,6 +142,7 @@ class PaginasTest(TestCase):
                     'precio': '8500.00',
                     'imagen': SimpleUploadedFile('cheesecake.png', imagen_png, content_type='image/png'),
                     'imagen_url': '',
+                    'stock': '1',
                     'disponible': 'on',
                 },
             )
@@ -193,6 +200,7 @@ class PaginasTest(TestCase):
             nombre='Torta de chocolate',
             descripcion='Torta artesanal',
             precio='15990.00',
+            stock=2,
         )
 
         response = self.client.post(
@@ -207,9 +215,16 @@ class PaginasTest(TestCase):
 
         pedido = Pedido.objects.get()
         self.assertRedirects(response, reverse('pedido_confirmado', args=[pedido.pk]))
+        url_confirmacion = response.url
+        producto.refresh_from_db()
+        self.assertEqual(producto.stock, 0)
         self.assertEqual(producto.pedidos.count(), 1)
 
-        response = self.client.get(response.url)
+        response = self.client.get(reverse('detalle_producto', args=[producto.pk]))
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
+
+        response = self.client.get(url_confirmacion)
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Pedido recibido')
@@ -220,6 +235,7 @@ class PaginasTest(TestCase):
             nombre='Torta de chocolate',
             descripcion='Torta artesanal',
             precio='15990.00',
+            stock=5,
         )
 
         response = self.client.post(
@@ -234,3 +250,58 @@ class PaginasTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(producto.pedidos.count(), 0)
+
+    @override_settings(DEBUG=True)
+    def test_producto_sin_stock_no_se_puede_comprar(self):
+        producto = Producto.objects.create(
+            nombre='Torta agotada',
+            descripcion='Sin stock',
+            precio='1000.00',
+            stock=0,
+        )
+
+        response = self.client.get('/')
+        self.assertContains(response, 'Torta agotada')
+        self.assertContains(response, 'Sin stock')
+
+        response = self.client.get(reverse('detalle_producto', args=[producto.pk]))
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
+
+        response = self.client.post(
+            reverse('detalle_producto', args=[producto.pk]),
+            {
+                'nombre_cliente': 'Ana Pérez',
+                'correo': 'ana@example.com',
+                'telefono': '+56912345678',
+                'cantidad': '1',
+            },
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Pedido.objects.count(), 0)
+
+    def test_compra_de_cantidad_superior_al_stock_no_crea_pedido_ni_descuenta(self):
+        producto = Producto.objects.create(
+            nombre='Torta de chocolate',
+            descripcion='Torta artesanal',
+            precio='15990.00',
+            stock=2,
+        )
+
+        response = self.client.post(
+            reverse('detalle_producto', args=[producto.pk]),
+            {
+                'nombre_cliente': 'Ana Pérez',
+                'correo': 'ana@example.com',
+                'telefono': '+56912345678',
+                'cantidad': '3',
+            },
+        )
+
+        producto.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Solo quedan 2 unidades disponibles')
+        self.assertEqual(producto.stock, 2)
+        self.assertEqual(Pedido.objects.count(), 0)

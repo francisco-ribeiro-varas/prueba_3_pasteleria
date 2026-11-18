@@ -7,6 +7,7 @@ class Producto(models.Model):
     precio = models.DecimalField(max_digits=8, decimal_places=2)
     imagen = models.ImageField(upload_to='productos/', blank=True)
     imagen_url = models.URLField(blank=True)
+    stock = models.PositiveIntegerField(default=0, verbose_name='unidades en stock')
     disponible = models.BooleanField(default=True)
 
     class Meta:

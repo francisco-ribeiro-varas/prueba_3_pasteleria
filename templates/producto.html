@@ -30,6 +30,7 @@
         <h1>{{ producto.nombre }}</h1>
         <p>{{ producto.descripcion }}</p>
         <p class="price">{{ producto.precio_formateado }} por unidad</p>
+        <p>Quedan {{ producto.stock }} unidad(es).</p>
         <form method="post">
             {% csrf_token %}
             {{ formulario.non_field_errors }}

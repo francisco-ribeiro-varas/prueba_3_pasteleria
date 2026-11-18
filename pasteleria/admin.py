@@ -28,7 +28,7 @@ def imagen_preview(obj):
 
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', imagen_preview, precio_clp, 'disponible')
+    list_display = ('nombre', imagen_preview, precio_clp, 'stock', 'disponible')
     list_filter = ('disponible',)
     search_fields = ('nombre', 'descripcion')
 
