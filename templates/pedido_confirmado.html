@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pedido recibido | Pastelería Dulce Hogar</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { display: grid; min-height: 100vh; margin: 0; padding: 1.5rem; place-items: center; background: #fffaf3; color: #392b2c; font-family: Georgia, "Times New Roman", serif; text-align: center; }
+        main { max-width: 560px; padding: 2rem; border: 1px solid #f0dfd4; border-radius: 1rem; background: white; }
+        h1 { color: #c65e68; }
+        p { color: #715e5c; font: 1rem/1.7 Arial, sans-serif; }
+        a { display: inline-block; margin-top: 0.75rem; padding: 0.9rem 1.35rem; border-radius: 999px; background: #c65e68; color: white; font: bold 1rem Arial, sans-serif; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>¡Pedido recibido!</h1>
+        <p>Registramos tu pedido de {{ pedido.cantidad }} unidad(es) de {{ pedido.producto_nombre }}.</p>
+        <a href="{% url 'inicio' %}">Volver a las tortas</a>
+    </main>
+</body>
+</html>

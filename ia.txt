@@ -1,0 +1,6 @@
+1 commit: no se ocupo IA 
+2 commit: no se ocupo IA
+3 commit: se uso IA en los html de index y el 404
+4 commit: se uso IA para que me dijiera como se formateaba el precio a pesos chilenos
+5 commit: no se ocupo IA 
+6 commit: se uso IA para que me dijiera como se agregaba el formulario

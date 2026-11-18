@@ -125,7 +125,7 @@
         </section>
         <section class="products" id="productos">
             <p class="eyebrow">Recién preparados</p>
-            <h2>Productos disponibles</h2>
+            <h2>Nuestras tortas</h2>
             {% if productos %}
                 <div class="cards">
                     {% for producto in productos %}
@@ -140,6 +140,12 @@
                             <h3>{{ producto.nombre }}</h3>
                             <p>{{ producto.descripcion }}</p>
                             <p class="product-price">{{ producto.precio_formateado }}</p>
+                            {% if producto.disponible %}
+                                <a class="button" href="{% url 'detalle_producto' producto.pk %}">Ver y comprar</a>
+                            {% else %}
+                                <p class="product-price">No disponible</p>
+                                <a class="button" href="{% url 'detalle_producto' producto.pk %}">Ver producto</a>
+                            {% endif %}
                         </article>
                     {% endfor %}
                 </div>

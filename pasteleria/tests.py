@@ -7,7 +7,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from PIL import Image
 
-from .models import Producto
+from .models import Pedido, Producto
 
 
 class PaginasTest(TestCase):
@@ -18,7 +18,7 @@ class PaginasTest(TestCase):
         self.assertTemplateUsed(response, 'inicio.html')
         self.assertContains(response, 'Pastelería Dulce Hogar')
 
-    def test_pagina_inicial_muestra_solo_productos_disponibles(self):
+    def test_pagina_inicial_muestra_productos_disponibles_y_agotados(self):
         Producto.objects.create(
             nombre='Torta de chocolate',
             descripcion='Torta artesanal',
@@ -34,7 +34,36 @@ class PaginasTest(TestCase):
         response = self.client.get('/')
 
         self.assertContains(response, 'Torta de chocolate')
-        self.assertNotContains(response, 'Galletas agotadas')
+        self.assertContains(response, 'Galletas agotadas')
+        self.assertContains(response, 'No disponible')
+
+    def test_pagina_inicial_no_muestra_productos_eliminados(self):
+        producto = Producto.objects.create(
+            nombre='Torta eliminada',
+            descripcion='Ya no existe',
+            precio='1000.00',
+        )
+        producto.delete()
+
+        response = self.client.get('/')
+
+        self.assertNotContains(response, 'Torta eliminada')
+
+    def test_producto_disponible_muestra_formulario_de_compra(self):
+        producto = Producto.objects.create(
+            nombre='Torta de chocolate',
+            descripcion='Torta artesanal',
+            precio='15990.00',
+        )
+
+        response = self.client.get(reverse('detalle_producto', args=[producto.pk]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Confirmar pedido')
+        self.assertContains(response, 'name="nombre_cliente"')
+        self.assertContains(response, 'name="correo"')
+        self.assertContains(response, 'name="telefono"')
+        self.assertContains(response, 'name="cantidad"')
 
     def test_precio_se_muestra_formateado_a_pesos_chilenos(self):
         Producto.objects.create(
@@ -119,10 +148,89 @@ class PaginasTest(TestCase):
             response = self.client.get('/admin/pasteleria/producto/')
             self.assertContains(response, '/media/productos/cheesecake.png')
 
-    @override_settings(DEBUG=False)
+    @override_settings(DEBUG=True)
     def test_pagina_404_para_producto_no_disponible(self):
-        response = self.client.get('/productos/no-disponible/')
+        producto = Producto.objects.create(
+            nombre='Torta agotada',
+            descripcion='Sin stock',
+            precio='1000.00',
+            disponible=False,
+        )
 
+        response = self.client.get(reverse('detalle_producto', args=[producto.pk]))
         self.assertEqual(response.status_code, 404)
         self.assertTemplateUsed(response, '404.html')
         self.assertContains(response, 'Producto no disponible', status_code=404)
+        response = self.client.post(
+            reverse('detalle_producto', args=[producto.pk]),
+            {
+                'nombre_cliente': 'Ana Pérez',
+                'correo': 'ana@example.com',
+                'telefono': '+56912345678',
+                'cantidad': '1',
+            },
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Pedido.objects.count(), 0)
+
+    @override_settings(DEBUG=True)
+    def test_pagina_404_para_producto_eliminado(self):
+        producto = Producto.objects.create(
+            nombre='Torta eliminada',
+            descripcion='Ya no existe',
+            precio='1000.00',
+        )
+        producto_id = producto.pk
+        producto.delete()
+
+        response = self.client.get(reverse('detalle_producto', args=[producto_id]))
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
+
+    def test_compra_se_guarda_y_recargar_confirmacion_no_duplica_pedido(self):
+        producto = Producto.objects.create(
+            nombre='Torta de chocolate',
+            descripcion='Torta artesanal',
+            precio='15990.00',
+        )
+
+        response = self.client.post(
+            reverse('detalle_producto', args=[producto.pk]),
+            {
+                'nombre_cliente': 'Ana Pérez',
+                'correo': 'ana@example.com',
+                'telefono': '+56912345678',
+                'cantidad': '2',
+            },
+        )
+
+        pedido = Pedido.objects.get()
+        self.assertRedirects(response, reverse('pedido_confirmado', args=[pedido.pk]))
+        self.assertEqual(producto.pedidos.count(), 1)
+
+        response = self.client.get(response.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Pedido recibido')
+        self.assertEqual(producto.pedidos.count(), 1)
+
+    def test_compra_no_permite_cantidad_cero(self):
+        producto = Producto.objects.create(
+            nombre='Torta de chocolate',
+            descripcion='Torta artesanal',
+            precio='15990.00',
+        )
+
+        response = self.client.post(
+            reverse('detalle_producto', args=[producto.pk]),
+            {
+                'nombre_cliente': 'Ana Pérez',
+                'correo': 'ana@example.com',
+                'telefono': '+56912345678',
+                'cantidad': '0',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(producto.pedidos.count(), 0)

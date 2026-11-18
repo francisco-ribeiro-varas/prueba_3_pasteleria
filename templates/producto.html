@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ producto.nombre }} | Pastelería Dulce Hogar</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 1.5rem; background: #fffaf3; color: #392b2c; font-family: Georgia, "Times New Roman", serif; }
+        main { max-width: 760px; margin: 2rem auto; padding: 2rem; border: 1px solid #f0dfd4; border-radius: 1rem; background: white; }
+        h1 { color: #c65e68; }
+        p, label { font: 1rem/1.6 Arial, sans-serif; }
+        .product-image { width: 100%; max-height: 360px; border-radius: 0.6rem; object-fit: cover; }
+        .price { color: #c65e68; font: bold 1.2rem Arial, sans-serif; }
+        form { display: grid; gap: 1rem; max-width: 440px; margin-top: 2rem; }
+        label { display: grid; gap: 0.4rem; }
+        input { width: 100%; padding: 0.75rem; border: 1px solid #d8c6bd; border-radius: 0.4rem; font: 1rem Arial, sans-serif; }
+        button, .back { display: inline-block; padding: 0.85rem 1.2rem; border: 0; border-radius: 999px; background: #c65e68; color: white; font: bold 1rem Arial, sans-serif; text-decoration: none; cursor: pointer; }
+        .errorlist { color: #a3212c; font: 0.9rem Arial, sans-serif; }
+        .back { margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+    <main>
+        {% if producto.imagen %}
+            <img class="product-image" src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+        {% elif producto.imagen_url %}
+            <img class="product-image" src="{{ producto.imagen_url }}" alt="{{ producto.nombre }}">
+        {% endif %}
+        <h1>{{ producto.nombre }}</h1>
+        <p>{{ producto.descripcion }}</p>
+        <p class="price">{{ producto.precio_formateado }} por unidad</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ formulario.non_field_errors }}
+            {% for campo in formulario %}
+                <label for="{{ campo.id_for_label }}">{{ campo.label }}
+                    {{ campo }}
+                    {{ campo.errors }}
+                </label>
+            {% endfor %}
+            <button type="submit">Confirmar pedido</button>
+        </form>
+        <a class="back" href="{% url 'inicio' %}">Volver a las tortas</a>
+    </main>
+</body>
+</html>

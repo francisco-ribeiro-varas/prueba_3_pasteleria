@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Producto
+from .models import Pedido, Producto
 
 
 @admin.display(description='Precio')
@@ -31,3 +31,12 @@ class ProductoAdmin(admin.ModelAdmin):
     list_display = ('nombre', imagen_preview, precio_clp, 'disponible')
     list_filter = ('disponible',)
     search_fields = ('nombre', 'descripcion')
+
+
+@admin.register(Pedido)
+class PedidoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'producto_nombre', 'nombre_cliente', 'cantidad', 'fecha')
+    list_filter = ('fecha',)
+    search_fields = ('producto_nombre', 'nombre_cliente', 'correo', 'telefono')
+    readonly_fields = ('producto', 'producto_nombre', 'precio_unitario', 'cantidad',
+                       'nombre_cliente', 'correo', 'telefono', 'fecha')

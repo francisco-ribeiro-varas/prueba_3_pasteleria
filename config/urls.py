@@ -24,6 +24,8 @@ from pasteleria import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.inicio, name='inicio'),
+    path('productos/<int:producto_id>/', views.detalle_producto, name='detalle_producto'),
+    path('pedidos/<int:pedido_id>/confirmacion/', views.pedido_confirmado, name='pedido_confirmado'),
 ]
 
 if settings.DEBUG:
